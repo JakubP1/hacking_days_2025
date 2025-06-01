@@ -3,14 +3,14 @@ version: "3.8"
 x-services-volume:
   &system-data-volume
   type: bind
-  source: ./systemdata.min.json
+  source: ./systemdata.hk2025.json
   target: /app/systemdata.json
 
 services:
   frontend:
-    image: hrbolek/frontend
+    image: hrbolek/frontend:0.9.0
     environment:
-      - DEMO=False
+      - DEMO=True
       - DEMODATA=True
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -19,9 +19,9 @@ services:
       - POSTGRES_PASSWORD=example
       - POSTGRES_DB=data
       - GQL_PROXY=http://apollo:3000/api/gql/
-      - SALT=8ac4785b-b68b-4eaa-9158-36bbe9566c76
+      - SALT=fe1c71b2-74c0-41e5-978f-eecbffac7418
       - ADMIN_DEFAULT_EMAIL=john.newbie@world.com
-      - ADMIN_DEFAULT_PASSWORD=8ac4785b-b68b-4eaa-9158-36bbe9566c76
+      - ADMIN_DEFAULT_PASSWORD=john.newbie@world.com
 
     healthcheck:
       # definice, umoznujici provest test, zda je kontejner v poradku (vsimnete si portu)
@@ -65,8 +65,7 @@ services:
           {"name": "projects", "url": "http://gql_projects:8000/gql"},
           {"name": "lessons", "url": "http://gql_lessons:8000/gql"},
           {"name": "surveys", "url": "http://gql_surveys:8000/gql"},
-          {"name": "externalids", "url": "http://gql_externalids:8000/gql"},
-          {"name": "admissions", "url": "http://gql_admissions:8000/gql"}
+          {"name": "externalids", "url": "http://gql_externalids:8000/gql"}
           
         ]       
     healthcheck:
@@ -93,7 +92,7 @@ services:
       - gql_externalids
 
   gql_ug:
-    image: hrbolek/gql_ug #   image: kavic/ug
+    image: hrbolek/gql_ug:0.8.6 #   image: kavic/ug
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -123,7 +122,7 @@ services:
       - postgres_gql
 
   gql_externalids:
-    image: hrbolek/gql_externalids # where u user.events
+    image: hrbolek/gql_externalids:0.8.7 # where u user.events
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -155,7 +154,7 @@ services:
 
   gql_events:
     # image: nafreju2/gql_events # where u user.events
-    image: hrbolek/gql_events # where u user.events
+    image: hrbolek/gql_events:0.8.7 # where u user.events
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -186,7 +185,7 @@ services:
       - postgres_gql
 
   gql_facilities:
-    image: hrbolek/gql_facilities 
+    image: hrbolek/gql_facilities:0.8.5 
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -215,7 +214,7 @@ services:
       - postgres_gql
 
   gql_granting:
-    image: hrbolek/gql_granting # where u user.events
+    image: hrbolek/gql_granting:0.8.6 # where u user.events
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -242,7 +241,7 @@ services:
       - postgres_gql
 
   gql_forms:
-    image: hrbolek/gql_forms
+    image: hrbolek/gql_forms:0.8.5
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -271,7 +270,7 @@ services:
       - postgres_gql
 
   gql_projects:
-    image: hrbolek/gql_projects # frajxd/gql_projects # hrbolek/gql_projects
+    image: hrbolek/gql_projects:0.8.7 # frajxd/gql_projects # hrbolek/gql_projects
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -301,7 +300,7 @@ services:
       - postgres_gql
 
   gql_publications:
-    image: hrbolek/gql_publications # kozmycz/gql_publications_a
+    image: hrbolek/gql_publications:0.8.6 # kozmycz/gql_publications_a
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -330,7 +329,7 @@ services:
       - postgres_gql
 
   gql_lessons:
-    image: hrbolek/gql_lessons # onickdock/gql_lessons_dev
+    image: hrbolek/gql_lessons:0.8.7 # onickdock/gql_lessons_dev
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -359,7 +358,7 @@ services:
       - postgres_gql
 
   gql_surveys:
-    image: hrbolek/gql_surveys
+    image: hrbolek/gql_surveys:0.8.6
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -388,7 +387,7 @@ services:
       - postgres_gql
 
   gql_admissions:
-    image: hrbolek/gql_admissions
+    image: hrbolek/gql_admissions:0.9.0
     environment:
       # link na db mimo stack
       # - POSTGRES_HOST=host.docker.internal:5432
@@ -426,8 +425,8 @@ services:
       timeout: 10s
       retries: 5
     restart: on-failure:3 # nedojde k restartu pokud je kontejner "unhealthy", maximalne 3 pokusy
-    # ports:
-    #   - 5432:5432
+    ports:
+      - 5432:5432
 
   postgres_credentials:
     image: postgres
@@ -442,11 +441,11 @@ services:
       timeout: 10s
       retries: 5
     restart: on-failure:3 # nedojde k restartu pokud je kontejner "unhealthy", maximalne 3 pokusy
-    # ports:
-    #   - 5433:5432
+    ports:
+      - 5433:5432
 
   analytics:
-    image: hrbolek/analytics
+    image: hrbolek/analytics:0.9.0
     environment:
       - GQL_PROXY=http://apollo:3000/api/gql/
     restart: on-failure:3 # nedojde k restartu pokud je kontejner "unhealthy", maximalne 3 pokusy
@@ -463,8 +462,8 @@ services:
       interval: 60s
       timeout: 10s
       retries: 5
-    # ports:
-    #   - 31122:80
+    ports:
+      - 31122:80
 
   prometheus:
     image: prom/prometheus
